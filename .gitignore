@@ -1,0 +1,8 @@
+.env
+youtube_token.json
+client_secret.json
+node_modules/
+output/
+feed.xml
+*.log
+.DS_Store
