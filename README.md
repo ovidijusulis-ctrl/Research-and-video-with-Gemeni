@@ -1,117 +1,125 @@
-# 🎓 Ovi English School
+# Gemini Research + Dynamic Visual Generator
 
-Automated English learning podcast generator using real news.
+A helper project for your main podcast app. It does two focused jobs:
 
-## Features
+1. **Gemini Pro research** → saves clean Markdown research notes.
+2. **Dynamic visuals** → generates scene images from your script and builds a timed slideshow video that follows the audio.
 
-- 📰 **Real News**: Fetches current news from RSS feeds (free)
-- 🤖 **AI Content**: Adapts news for learners using Gemini (free tier)
-- 🎙️ **Audio Generation**: Creates podcasts using Edge TTS (free)
-- 📚 **Multi-Level**: Beginner, Intermediate, Advanced (coming soon)
-- 🌍 **Multi-Language**: English now, Spanish coming soon
-
-## Quick Start
-
-### 1. Install dependencies
-
-```bash
-cd ovi-english-school
-npm install
-pip install edge-tts
-```
-
-### 2. Set up API key (optional but recommended)
-
-```bash
-cp .env.example .env
-# Edit .env and add your Gemini API key
-# Get free key at: https://aistudio.google.com/app/apikey
-```
-
-### 3. Run the generator
-
-```bash
-npm start
-```
-
-This will:
-1. Fetch today's news
-2. Adapt it for beginners
-3. Generate audio podcast
-4. Save transcripts
+This is intentionally lightweight so it can plug into any pipeline that already creates:
+- a script (`.txt`)
+- an audio file (`.mp3`)
 
 ---
 
-## Dynamic Scene Images (Gemini Pro Image / "Nano Banana")
+## What It Does
 
-Generate changing images based on what the speaker is saying, then render a dynamic video.
+- **Research runner** (Gemini Pro text models) → `research/*.md`
+- **Scene generator** → `scenes.json` with prompts + timing
+- **Image generator** (Gemini image models, a.k.a. “Nano Banana”) → `scenes/*.png`
+- **Video builder** → FFmpeg slideshow video that changes images as the speaker talks
 
-### 1) Create scene prompts from the script
+---
 
-```bash
-node src/scene-generator.js --script output/2025-01-29/ovi-english-beginner-2025-01-29-script.txt --output output/2025-01-29/scenes.json --max-scenes 10
-```
+## Quick Start
 
-### 2) Generate images with Gemini image models
-
-```bash
-node src/image-generator.js --scenes output/2025-01-29/scenes.json --out-dir output/2025-01-29/scenes --model gemini-3-pro-image-preview --skip-existing
-```
-
-### 3) Build a dynamic slideshow video
+### 1) Install
 
 ```bash
-python3 src/video-converter.py output/2025-01-29/ovi-english-beginner-2025-01-29.mp3 --scenes output/2025-01-29/scenes.json --images-dir output/2025-01-29/scenes -o output/2025-01-29/ovi-english-beginner-2025-01-29.mp4
+npm install
 ```
 
-## Output
+### 2) Configure
 
-Each run creates files in `output/YYYY-MM-DD/`:
-
-```
-output/2025-01-29/
-├── ovi-english-beginner-2025-01-29.mp3      # Audio episode
-├── ovi-english-beginner-slow-2025-01-29.mp3 # Slow version
-├── ovi-english-beginner-2025-01-29-script.txt
-└── ovi-english-beginner-2025-01-29-transcript.md
+```bash
+cp .env.example .env
+# Add your Gemini Pro API key
 ```
 
-## Cost
+### 3) Run Research (optional)
 
-| Component | Cost |
-|-----------|------|
-| News (RSS) | Free |
-| Content AI (Gemini) | Free (1500 req/day) |
-| Audio (Edge TTS) | Free |
-| **Total** | **$0** |
+```bash
+node src/gemini-research.js --prompt "Research best RSS sources for tech news" --out research/rss.md
+```
+
+### 4) Generate Dynamic Visuals
+
+```bash
+# 1) Create scene prompts
+node src/scene-generator.js \
+  --script output/2025-01-29/episode-script.txt \
+  --output output/2025-01-29/scenes.json \
+  --max-scenes 10
+
+# 2) Generate images with Gemini image model
+node src/image-generator.js \
+  --scenes output/2025-01-29/scenes.json \
+  --out-dir output/2025-01-29/scenes \
+  --model gemini-3-pro-image-preview \
+  --skip-existing
+
+# 3) Build the video from images + audio
+python3 src/video-converter.py \
+  output/2025-01-29/episode-audio.mp3 \
+  --scenes output/2025-01-29/scenes.json \
+  --images-dir output/2025-01-29/scenes \
+  -o output/2025-01-29/episode-video.mp4
+```
+
+---
+
+## Integration With Main App
+
+Your main app should already produce:
+- `episode-script.txt`
+- `episode-audio.mp3`
+
+Then call:
+1) `scene-generator.js` (creates `scenes.json`)
+2) `image-generator.js` (creates images)
+3) `video-converter.py --scenes` (creates video)
+
+This project does not replace your pipeline — it plugs into it.
+
+---
+
+## Configuration
+
+`.env`:
+```
+GEMINI_API_KEY=your_key_here
+GEMINI_IMAGE_MODEL=gemini-3-pro-image-preview
+GEMINI_TEXT_MODEL=gemini-3-pro-preview
+```
+
+You can also choose a different Gemini image model by passing `--model`.
+
+---
 
 ## Project Structure
 
 ```
-ovi-english-school/
+research-and-video-with-gemeni/
 ├── src/
-│   ├── orchestrator.js    # Main pipeline
-│   ├── news-fetcher.js    # RSS news fetching
-│   ├── content-adapter.js # AI content generation
-│   └── audio-generator.py # Text-to-speech
-│   ├── scene-generator.js # Script -> scene prompts
-│   ├── image-generator.js # Scene prompts -> Gemini images
-│   └── gemini-research.js # Research runner
-├── output/                # Generated episodes
-├── config/
-├── .env                   # API keys (create from .env.example)
+│   ├── scene-generator.js   # Script -> scene prompts + timing
+│   ├── image-generator.js   # Scene prompts -> Gemini images
+│   ├── gemini-research.js   # Research runner
+│   └── video-converter.py   # FFmpeg slideshow builder
+├── output/                  # Your generated scenes/images/videos
+├── research/                # Gemini research outputs
+├── .env                     # API keys (ignored)
 └── package.json
 ```
 
-## Future Plans
+---
 
-- [ ] Intermediate & Advanced levels
-- [ ] Spanish language support
-- [ ] YouTube auto-upload
-- [ ] Spotify/podcast distribution
-- [ ] Daily automation (cron)
-- [ ] PDF worksheets
+## Notes
+
+- Timing is **approximate** (based on words-per-minute). This keeps it fast and cheap.
+- If you want perfect sync, we can add Whisper/WhisperX alignment later.
+- Scene style is defined in `src/scene-generator.js` — you can customize it there.
+
+---
 
 ## Author
 
-Created by Ovi with ❤️
+Created by Ovi with help from AI tools.

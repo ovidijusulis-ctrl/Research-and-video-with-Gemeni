@@ -1,22 +1,14 @@
 {
-  "name": "ovi-english-school",
+  "name": "gemini-research-visual-generator",
   "version": "1.0.0",
-  "description": "Automated English learning podcast generator using real news",
-  "main": "src/orchestrator.js",
+  "description": "Gemini-powered research runner and dynamic scene video generator for podcast pipelines",
+  "main": "src/scene-generator.js",
   "scripts": {
-    "start": "node src/orchestrator.js",
-    "test": "node src/orchestrator.js --test",
-    "fetch-news": "node src/news-fetcher.js",
-    "generate-audio": "python3 src/audio-generator.py",
-    "youtube:auth": "node src/youtube-uploader.js --auth",
-    "youtube:upload": "node src/youtube-uploader.js",
     "video:convert": "python3 src/video-converter.py",
     "video:scenes": "python3 src/video-converter.py --scenes",
     "scenes:generate": "node src/scene-generator.js",
     "images:generate": "node src/image-generator.js",
-    "research:gemini": "node src/gemini-research.js",
-    "rss:generate": "node src/rss-generator.js",
-    "publish": "node src/publisher.js"
+    "research:gemini": "node src/gemini-research.js"
   },
   "author": "Ovi",
   "license": "MIT",

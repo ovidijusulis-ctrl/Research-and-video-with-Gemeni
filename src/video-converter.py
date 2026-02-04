@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Video Converter - Creates YouTube videos from audio + image
-Uses FFmpeg to combine static image with audio for YouTube upload
+Video Converter - Creates videos from audio + images
+Supports static background or dynamic scene-based slideshow.
 """
 
 import subprocess
