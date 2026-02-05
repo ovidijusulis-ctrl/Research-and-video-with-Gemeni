@@ -2,8 +2,8 @@
 
 A helper project for your main podcast app. It does two focused jobs:
 
-1. **Gemini Pro research** → saves clean Markdown research notes.
-2. **Dynamic visuals** → generates scene images from your script and builds a timed slideshow video that follows the audio.
+1. **Gemini Pro research** -> saves clean Markdown research notes.
+2. **Dynamic visuals** -> generates scene images from your script and builds a timed slideshow video that follows the audio.
 
 This is intentionally lightweight so it can plug into any pipeline that already creates:
 - a script (`.txt`)
@@ -13,10 +13,10 @@ This is intentionally lightweight so it can plug into any pipeline that already 
 
 ## What It Does
 
-- **Research runner** (Gemini Pro text models) → `research/*.md`
-- **Scene generator** → `scenes.json` with prompts + timing
-- **Image generator** (Gemini image models, a.k.a. “Nano Banana”) → `scenes/*.png`
-- **Video builder** → FFmpeg slideshow video that changes images as the speaker talks
+- **Research runner** (Gemini Pro text models) -> `research/*.md`
+- **Scene generator** -> `scenes.json` with prompts + timing
+- **Image generator** (Gemini image models, a.k.a. "Nano Banana") -> `scenes/*.png`
+- **Video builder** -> FFmpeg slideshow video that changes images as the speaker talks
 
 ---
 
@@ -45,24 +45,13 @@ node src/gemini-research.js --prompt "Research best RSS sources for tech news" -
 
 ```bash
 # 1) Create scene prompts
-node src/scene-generator.js \
-  --script output/2025-01-29/episode-script.txt \
-  --output output/2025-01-29/scenes.json \
-  --max-scenes 10
+node src/scene-generator.js   --script output/2025-01-29/episode-script.txt   --output output/2025-01-29/scenes.json   --max-scenes 10
 
 # 2) Generate images with Gemini image model
-node src/image-generator.js \
-  --scenes output/2025-01-29/scenes.json \
-  --out-dir output/2025-01-29/scenes \
-  --model gemini-3-pro-image-preview \
-  --skip-existing
+node src/image-generator.js   --scenes output/2025-01-29/scenes.json   --out-dir output/2025-01-29/scenes   --model gemini-3-pro-image-preview   --skip-existing
 
 # 3) Build the video from images + audio
-python3 src/video-converter.py \
-  output/2025-01-29/episode-audio.mp3 \
-  --scenes output/2025-01-29/scenes.json \
-  --images-dir output/2025-01-29/scenes \
-  -o output/2025-01-29/episode-video.mp4
+python3 src/video-converter.py   output/2025-01-29/episode-audio.mp3   --scenes output/2025-01-29/scenes.json   --images-dir output/2025-01-29/scenes   -o output/2025-01-29/episode-video.mp4
 ```
 
 ---
@@ -79,6 +68,20 @@ Then call:
 3) `video-converter.py --scenes` (creates video)
 
 This project does not replace your pipeline — it plugs into it.
+
+---
+
+## Public Research Workspace
+
+This repo also stores public research requests and summaries for Ovi English School.
+
+- `requests/` -> open research questions and context
+- `findings/` -> research summaries with sources
+- `.github/ISSUE_TEMPLATE/` -> GitHub issue template for new requests
+
+Guidelines:
+- Keep content public-safe (no private project data).
+- Prefer concise summaries with sources and a confidence note.
 
 ---
 
@@ -106,6 +109,8 @@ research-and-video-with-gemeni/
 │   └── video-converter.py   # FFmpeg slideshow builder
 ├── output/                  # Your generated scenes/images/videos
 ├── research/                # Gemini research outputs
+├── requests/                # Public research requests
+├── findings/                # Public research summaries
 ├── .env                     # API keys (ignored)
 └── package.json
 ```
