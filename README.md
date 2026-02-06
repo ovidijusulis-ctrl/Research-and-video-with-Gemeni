@@ -71,17 +71,23 @@ This project does not replace your pipeline — it plugs into it.
 
 ---
 
-## Public Research Workspace
+## Research Hub (Claude ↔ Gemini ↔ Codex)
 
-This repo also stores public research requests and summaries for Ovi English School.
+This repo is the shared research brain for the Ovi English School project.
 
+**Workflow:** Claude (planner) → writes research prompts → Ovi runs them in Gemini Deep Research → saves results here → Claude + Codex read and act on them.
+
+- **[`RESEARCH-QUEUE.md`](RESEARCH-QUEUE.md)** -> prioritized research tasks with ready-to-paste prompts
+- `findings/` -> completed research summaries (Gemini Deep Research output)
 - `requests/` -> open research questions and context
-- `findings/` -> research summaries with sources
-- `.github/ISSUE_TEMPLATE/` -> GitHub issue template for new requests
+- `00-04 folders` -> 28 completed research documents organized by priority
 
-Guidelines:
-- Keep content public-safe (no private project data).
-- Prefer concise summaries with sources and a confidence note.
+### Quick Start for Research
+1. Open `RESEARCH-QUEUE.md`
+2. Pick the top pending item
+3. Copy the prompt into [Gemini Deep Research](https://gemini.google.com)
+4. Save the output to `findings/` with the specified filename
+5. Push to GitHub
 
 ---
 
